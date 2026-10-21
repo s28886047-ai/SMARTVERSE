@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SMARTVERSE — Bolalar va O'quvchilar Uchun Zamonaviy Ta'lim va O'yinlar Platformasi</title>
+    <meta name="description" content="SMARTVERSE — interaktiv maktab fanlari testlari, 2D poyga, xotira, matematika va so'z topish o'yinlari orqali bilim olish platformasi.">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/games.css">
+</head>
+<body>
+    <!-- Dynamic Cosmic Starfield Canvas -->
+    <canvas id="cosmic-bg-canvas"></canvas>
+
+    <div class="app-container">
+        <!-- Main Top Navigation Header -->
+        <header class="main-header">
+            <div class="header-container">
+                <!-- Logo -->
+                <div class="brand-logo" onclick="window.app.switchTab('home')">
+                    <div class="logo-icon-box">🌌</div>
+                    <div class="brand-text-wrap">
+                        <span class="brand-title">SMARTVERSE</span>
+                        <span class="brand-tagline">Ta'lim & O'yinlar</span>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <span class="search-icon-hint">🔍</span>
+                    <input type="text" id="global-search-input" class="search-input-box" placeholder="Fan yoki o'yin qidirish..." autocomplete="off">
+                    <div id="search-dropdown-results" class="search-dropdown"></div>
+                </div>
+
+                <!-- Navigation Tabs (Desktop) -->
+                <ul class="nav-links" id="main-nav-links">
+                    <li><a href="#" class="nav-link active" data-tab="home">🏠 Bosh sahifa</a></li>
+                    <li><a href="#" class="nav-link" data-tab="subjects">📚 Maktab Fanlari</a></li>
+                    <li><a href="#" class="nav-link" data-tab="games">🎮 O'yinlar Olami</a></li>
+                    <li><a href="#" class="nav-link" data-tab="achievements">🏆 Yutuqlar</a></li>
+                    <li><a href="#" class="nav-link" data-tab="progress">📊 Rivojlanish</a></li>
+                </ul>
+
+                <!-- Header Actions & Profile -->
+                <div class="header-actions">
+                    <!-- Sound Toggle -->
+                    <button class="sound-toggle-btn" id="sound-toggle-btn" title="Ovozni yoqish / o'chirish">🔊</button>
+
+                    <!-- Streak Badge -->
+                    <div class="header-stat-pill" title="Faollik seriyasi">
+                        <span>🔥</span>
+                        <span id="header-streak-val">1 kun</span>
+                    </div>
+
+                    <!-- Coins Badge -->
+                    <div class="header-stat-pill" title="Yig'ilgan tangalar">
+                        <span>🪙</span>
+                        <span id="header-coins-val">50</span>
+                    </div>
+
+                    <!-- User Profile Badge -->
+                    <div class="user-profile-badge" id="header-profile-badge" title="Profilni tahrirlash">
+                        <div class="profile-avatar-box" id="header-user-avatar">🚀</div>
+                        <div class="profile-details">
+                            <div class="profile-name-row">
+                                <span class="profile-name" id="header-user-name">Yosh Bilimdon</span>
+                                <span class="level-tag" id="header-user-level">1-daraja</span>
+                            </div>
+                            <div class="profile-xp-track">
+                                <div class="profile-xp-fill" id="header-xp-fill" style="width: 20%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Hamburger Menu Button -->
+                    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menyu">☰</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Wrapper -->
+        <main class="main-content">
+
+            <!-- 1. BOSH SAHIFA (HOME) -->
+            <section id="section-home" class="tab-section active">
+                <!-- Hero Banner -->
+                <div class="hero-section card-glow">
+                    <div class="hero-glow-blob"></div>
+                    <div class="hero-content">
+                        <div class="hero-tagline-badge">
+                            <span>✨</span> Kosmik Ta'lim va O'yin Platformasi
+                        </div>
+                        <h1 class="hero-title">
+                            Xush kelibsiz, <br><span class="gradient-text" id="home-hero-greeting-name">Yosh Bilimdon</span>!
+                        </h1>
+                        <p class="hero-description">
+                            SMARTVERSE bilan maktab fanlarini interaktiv testlar orqali o'rganing, ajoyib 2D o'yinlarda mahoratingizni sinang, ballar va yangi yutuqlarni qo'lga kiriting!
+                        </p>
+                        <div class="hero-actions-row">
+                            <button class="btn btn-primary" onclick="window.app.switchTab('subjects')">
+                                <span>📚</span> Fanlarni o'rganish
+                            </button>
+                            <button class="btn btn-accent" onclick="window.app.switchTab('games')">
+                                <span>🎮</span> O'yinlar olamiga kirish
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hero Stats Overview Card -->
+                    <div class="hero-stats-card">
+                        <div class="hero-stats-header">
+                            <span class="hero-stats-title">⭐ Sizning Rivojlanishingiz</span>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.app.switchTab('progress')">
+                                Batafsil ➔
+                            </button>
+                        </div>
+                        <div class="hero-stats-grid">
+                            <div class="hero-stat-box">
+                                <span class="hero-stat-num" id="stat-total-tests">0</span>
+                                <span class="hero-stat-label">Yechilgan testlar</span>
+                            </div>
+                            <div class="hero-stat-box">
+                                <span class="hero-stat-num" id="stat-correct-answers">0</span>
+                                <span class="hero-stat-label">To'g'ri javoblar</span>
+                            </div>
+                            <div class="hero-stat-box">
+                                <span class="hero-stat-num" id="stat-games-played">0</span>
+                                <span class="hero-stat-label">O'ynalgan o'yinlar</span>
+                            </div>
+                            <div class="hero-stat-box">
+                                <span class="hero-stat-num" id="stat-accuracy-rate">100%</span>
+                                <span class="hero-stat-label">Aniqlik darajasi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Subjects Teaser -->
+                <div class="section-header">
+                    <div class="section-title-wrap">
+                        <h2><span>📖</span> Maktab Fanlari</h2>
+                        <p class="section-subtitle">Qiziqarli savollar, tushuntirishlar va mukofotli testlar</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="window.app.switchTab('subjects')">
+                        Barcha fanlar ➔
+                    </button>
+                </div>
+                <div class="subjects-grid" id="home-subjects-preview">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Featured Games Teaser -->
+                <div class="section-header" style="margin-top: 50px;">
+                    <div class="section-title-wrap">
+                        <h2><span>🕹️</span> O'yinlar Olami</h2>
+                        <p class="section-subtitle">O'ynab bilim oling, reaksiyangiz va xotirangizni charxlang</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="window.app.switchTab('games')">
+                        Barcha o'yinlar ➔
+                    </button>
+                </div>
+                <div class="games-grid">
+                    <!-- Car Race Card -->
+                    <div class="game-hub-card card-glow" onclick="window.app.openGameModal('car')">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #091236 0%, #1e215d 100%);">
+                            <span class="game-hub-icon">🏎️</span>
+                            <span class="game-hub-badge">2D Poyga</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Cyber Poyga</h3>
+                            <p class="game-hub-desc">To'siqlarni chetlab o'ting, yulduz va tangalarni to'plang hamda tezlik rekordini yangilang!</p>
+                            <div class="game-hub-footer">
+                                <span class="game-high-score-tag">Rekord: <b id="hub-car-best">0</b> ball</span>
+                                <button class="btn btn-primary" style="padding: 8px 16px;">O'ynash ⚡</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memory Match Card -->
+                    <div class="game-hub-card card-glow" onclick="window.app.openGameModal('memory')">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #2b1154 0%, #4a1c6d 100%);">
+                            <span class="game-hub-icon">🧠</span>
+                            <span class="game-hub-badge">Xotira</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Kosmik Xotira</h3>
+                            <p class="game-hub-desc">Yashiringan kosmik kartalarni oching va bir xil juftliklarni topib xotirangizni mustahkamlang!</p>
+                            <div class="game-hub-footer">
+                                <span class="game-high-score-tag">3 xil qiyinlik</span>
+                                <button class="btn btn-accent" style="padding: 8px 16px;">O'ynash ⚡</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Speed Math Card -->
+                    <div class="game-hub-card card-glow" onclick="window.app.openGameModal('math')">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #11362e 0%, #1c5d47 100%);">
+                            <span class="game-hub-icon">🧮</span>
+                            <span class="game-hub-badge">Hisoblash</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Tezkor Matematika</h3>
+                            <p class="game-hub-desc">Vaqt tugashidan oldin misollarni chaqqon yeching, ketma-ket combo ballar to'plang!</p>
+                            <div class="game-hub-footer">
+                                <span class="game-high-score-tag">Vaqtli poyga</span>
+                                <button class="btn btn-gold" style="padding: 8px 16px;">O'ynash ⚡</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Word Puzzle Card -->
+                    <div class="game-hub-card card-glow" onclick="window.app.openGameModal('word')">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #361b11 0%, #5d361c 100%);">
+                            <span class="game-hub-icon">📚</span>
+                            <span class="game-hub-badge">Boshqotirma</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">So'z Topish</h3>
+                            <p class="game-hub-desc">Aralash harflardan berilgan ta'rifga mos ilmiy va ta'limiy so'zlarni tuzing!</p>
+                            <div class="game-hub-footer">
+                                <span class="game-high-score-tag">Lug'at boyligi</span>
+                                <button class="btn btn-primary" style="padding: 8px 16px;">O'ynash ⚡</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. MAKTAB FANLARI VA TESTLAR -->
+            <section id="section-subjects" class="tab-section">
+                <div class="section-header">
+                    <div class="section-title-wrap">
+                        <h2><span>📚</span> Maktab Fanlari va Testlar</h2>
+                        <p class="section-subtitle">O'zingizga qiziq fanni tanlang, bilimingizni sinang va darajangizni ko'taring</p>
+                    </div>
+                </div>
+                <!-- Subjects Grid -->
+                <div class="subjects-grid" id="subjects-grid">
+                    <!-- Populated via QuizApp.renderSubjectCards -->
+                </div>
+            </section>
+
+            <!-- 3. O'YINLAR OLAMI (GAMES) -->
+            <section id="section-games" class="tab-section">
+                <div class="section-header">
+                    <div class="section-title-wrap">
+                        <h2><span>🎮</span> O'yinlar Olami</h2>
+                        <p class="section-subtitle">Barcha o'yinlar kompyuter va mobil sensorli boshqaruvga moslangan</p>
+                    </div>
+                </div>
+                <div class="games-grid">
+                    <!-- Car Game Card -->
+                    <div class="game-hub-card card-glow">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #091236 0%, #1e215d 100%);">
+                            <span class="game-hub-icon">🏎️</span>
+                            <span class="game-hub-badge">2D Cyber Poyga</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Cyber Poyga (Mashina)</h3>
+                            <p class="game-hub-desc">Klaviatura (strelkalar / A, D) yoki mobil teginish tugmalari bilan mashinani boshqaring. To'siqlardan qoching va yulduzchalarni yig'ing!</p>
+                            <div class="game-hub-footer">
+                                <button class="btn btn-primary" onclick="window.app.openGameModal('car')">
+                                    <span>▶</span> Boshlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memory Game Card -->
+                    <div class="game-hub-card card-glow">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #2b1154 0%, #4a1c6d 100%);">
+                            <span class="game-hub-icon">🧠</span>
+                            <span class="game-hub-badge">Kosmik Xotira</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Kosmik Xotira O'yini</h3>
+                            <p class="game-hub-desc">Kartalarni bosing, rasmlarni eslab qoling va barcha juftliklarni eng kam yurish bilan topib 3 ta yulduzga erishing!</p>
+                            <div class="game-hub-footer">
+                                <button class="btn btn-accent" onclick="window.app.openGameModal('memory')">
+                                    <span>▶</span> Boshlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Speed Math Card -->
+                    <div class="game-hub-card card-glow">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #11362e 0%, #1c5d47 100%);">
+                            <span class="game-hub-icon">🧮</span>
+                            <span class="game-hub-badge">Tezkor Matematika</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">Tezkor Matematika</h3>
+                            <p class="game-hub-desc">60 soniya vaqt ichida berilgan arifmetik misollarga to'g'ri javobni tanlang. Har bir to'g'ri ketma-ketlik qo'shimcha combo ball beradi!</p>
+                            <div class="game-hub-footer">
+                                <button class="btn btn-gold" onclick="window.app.openGameModal('math')">
+                                    <span>▶</span> Boshlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Word Game Card -->
+                    <div class="game-hub-card card-glow">
+                        <div class="game-hub-thumb" style="background: linear-gradient(135deg, #361b11 0%, #5d361c 100%);">
+                            <span class="game-hub-icon">📚</span>
+                            <span class="game-hub-badge">Boshqotirma</span>
+                        </div>
+                        <div class="game-hub-body">
+                            <h3 class="game-hub-title">So'z Topish Jumboqlari</h3>
+                            <p class="game-hub-desc">Koinot, tabiat, matematika va axborot texnologiyalari atamalarini aralashgan harflardan to'g'ri ketma-ketlikda yig'ing!</p>
+                            <div class="game-hub-footer">
+                                <button class="btn btn-primary" onclick="window.app.openGameModal('word')">
+                                    <span>▶</span> Boshlash
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. YUTUQLAR VA BALLAR -->
+            <section id="section-achievements" class="tab-section">
+                <div class="section-header">
+                    <div class="section-title-wrap">
+                        <h2><span>🏆</span> Natijalar va Yutuqlar</h2>
+                        <p class="section-subtitle" id="achievements-summary-text">Barcha qahramonlik yutuqlari va mukofotlari</p>
+                    </div>
+                </div>
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Populated via App.renderAchievements -->
+                </div>
+            </section>
+
+            <!-- 5. KUNLIK VAZIFALAR VA RIVOJLANISH -->
+            <section id="section-progress" class="tab-section">
+                <div class="section-header">
+                    <div class="section-title-wrap">
+                        <h2><span>📊</span> Kunlik Vazifalar va O'quvchi Rivojlanishi</h2>
+                        <p class="section-subtitle">Har kungi topshiriqlarni bajaring, mukofotlarni oling va bilim ko'rsatkichlaringizni kuzating</p>
+                    </div>
+                </div>
+
+                <div class="progress-layout">
+                    <!-- Daily Quests Column -->
+                    <div class="daily-quests-box">
+                        <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <span>🎯</span> Bugungi Vazifalar
+                        </h3>
+                        <div class="daily-quests-list" id="daily-quests-list">
+                            <!-- Populated via App.renderDailyQuests -->
+                        </div>
+                    </div>
+
+                    <!-- Weekly Activity Chart & Stats Column -->
+                    <div class="progress-stats-column">
+                        <div class="stats-summary-grid">
+                            <div class="stat-metric-card">
+                                <span class="stat-metric-icon">⭐</span>
+                                <div>
+                                    <div class="stat-metric-val" id="stat-coins-summary">50</div>
+                                    <div class="stat-metric-lbl">Jami Tangalar</div>
+                                </div>
+                            </div>
+                            <div class="stat-metric-card">
+                                <span class="stat-metric-icon">🔥</span>
+                                <div>
+                                    <div class="stat-metric-val" id="stat-streak-summary">1 kun</div>
+                                    <div class="stat-metric-lbl">Faollik Seriyasi</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="weekly-chart-box">
+                            <div class="weekly-chart-title">
+                                <span>📈 Haftalik Faollik (XP)</span>
+                                <span style="font-size: 0.8rem; color: var(--primary);">Bu hafta</span>
+                            </div>
+                            <div class="weekly-bars-container" id="weekly-chart-bars">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation for Mobile -->
+        <nav class="bottom-nav">
+            <a href="#" class="bottom-nav-link active" data-tab="home">
+                <span class="bottom-nav-icon">🏠</span>
+                <span>Bosh</span>
+            </a>
+            <a href="#" class="bottom-nav-link" data-tab="subjects">
+                <span class="bottom-nav-icon">📚</span>
+                <span>Fanlar</span>
+            </a>
+            <a href="#" class="bottom-nav-link" data-tab="games">
+                <span class="bottom-nav-icon">🎮</span>
+                <span>O'yinlar</span>
+            </a>
+            <a href="#" class="bottom-nav-link" data-tab="achievements">
+                <span class="bottom-nav-icon">🏆</span>
+                <span>Yutuqlar</span>
+            </a>
+            <a href="#" class="bottom-nav-link" data-tab="progress">
+                <span class="bottom-nav-icon">📊</span>
+                <span>Vazifalar</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- QUIZ MODAL -->
+    <div class="app-modal" id="quiz-modal">
+        <div class="modal-dialog" id="quiz-modal-inner">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <h3 id="quiz-modal-title">Fan nomi</h3>
+                    <div class="modal-subtitle">Bilimingizni sinab ko'ring</div>
+                </div>
+                <div class="modal-hud-stats">
+                    <div class="hud-pill timer-pill" id="quiz-timer-pill">
+                        ⏱️ <span id="quiz-timer-text">20s</span>
+                    </div>
+                    <div class="hud-pill counter-pill">
+                        🎯 <span id="quiz-question-counter">1 / 6</span>
+                    </div>
+                </div>
+                <button class="modal-close-btn" onclick="window.quizApp.closeQuizModal()">✕</button>
+            </div>
+            
+            <div class="quiz-progress-track">
+                <div class="quiz-progress-bar-fill" id="quiz-progress-bar-fill" style="width: 15%"></div>
+            </div>
+
+            <div class="modal-body" id="quiz-modal-content">
+                <div class="question-container">
+                    <h2 class="question-text" id="quiz-question-text">Savol yuklanmoqda...</h2>
+                </div>
+                
+                <div class="quiz-options-grid" id="quiz-options-container">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <div id="quiz-feedback" class="quiz-feedback-wrap"></div>
+            </div>
+
+            <div class="modal-footer" id="quiz-modal-footer">
+                <button class="btn btn-secondary" onclick="window.quizApp.closeQuizModal()">
+                    Chiqish
+                </button>
+                <button class="btn btn-primary" id="quiz-next-btn" onclick="window.quizApp.nextQuestion()" disabled>
+                    Keyingisi ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME 1: CAR RACE MODAL -->
+    <div class="game-modal" id="game-modal-car">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="game-title">🏎️ Cyber Poyga</div>
+                <button class="modal-close-btn" onclick="window.app.closeGameModal('car')">✕</button>
+            </div>
+
+            <!-- Start Screen & Rules -->
+            <div class="game-screen" id="car-start-screen">
+                <div class="game-intro-icon">🏎️</div>
+                <h2 class="game-intro-title">Cyber Poygaga Xush Kelibsiz!</h2>
+                <p class="game-intro-desc">Kosmik magistralda boshqaruvni qo'lga oling va to'siqlarga urilmasdan eng yuqori ballni to'plang.</p>
+                <div class="game-rules-card">
+                    <div class="rules-title">Qoidalar va Boshqaruv:</div>
+                    <ul class="rules-list">
+                        <li><b>Kompyuterda:</b> Chap va O'ng strelkalar yoki A va D tugmalari.</li>
+                        <li><b>Telefonda:</b> Ekrandagi chap va o'ng ko'k tugmalarni bosing.</li>
+                        <li>Yo'ldagi boshqa mashina va to'siqlardan qoching (3 ta jon beriladi).</li>
+                        <li>Oltin yulduzlarni yig'ib qo'shimcha ball va tangalar oling!</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="window.carGame.start()">
+                    <span>⚡</span> Poygani boshlash
+                </button>
+            </div>
+
+            <!-- In-Game HUD -->
+            <div class="game-hud" id="car-hud" style="display: none;">
+                <div class="hud-item">🎯 Ball: <span class="val" id="car-score-val">0</span></div>
+                <div class="hud-item">⭐ Yulduzlar: <span class="val" id="car-coins-val">0</span></div>
+                <div class="hud-item">⚡ <span class="val" id="car-speed-val">100 km/h</span></div>
+                <div class="hud-item"><span id="car-hearts-val">❤️❤️❤️</span></div>
+            </div>
+
+            <!-- Canvas Wrapper -->
+            <div class="car-game-wrapper">
+                <canvas id="car-game-canvas" width="440" height="520"></canvas>
+            </div>
+
+            <!-- Touch Controls for Mobile/Tablet -->
+            <div class="car-touch-controls" id="car-touch-controls">
+                <button class="car-touch-btn" id="car-touch-left">◀ CHAPGA</button>
+                <button class="car-touch-btn" id="car-touch-right">O'NGA ▶</button>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div class="game-over-screen" id="car-gameover-screen" style="display: none;">
+                <div class="game-over-icon">💥</div>
+                <h2 class="game-over-title">Poyga Yakunlandi!</h2>
+                <p class="game-over-subtitle">Ajoyib harakat qildingiz!</p>
+                <div class="game-stats-box">
+                    <div class="game-stat-item">
+                        <span class="val" id="car-final-score">0</span>
+                        <span class="lbl">To'plangan Ball</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="car-final-coins">0</span>
+                        <span class="lbl">Yig'ilgan Yulduzlar</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="car-final-best">0</span>
+                        <span class="lbl">Shaxsiy Rekord</span>
+                    </div>
+                </div>
+                <div class="game-rewards-row">
+                    <div class="game-reward-pill" id="car-earned-xp">+0 XP</div>
+                    <div class="game-reward-pill" id="car-earned-coins">+0 Tanga</div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="window.app.closeGameModal('car')">Chiqish</button>
+                    <button class="btn btn-primary" onclick="window.carGame.start()">Qayta o'ynash 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME 2: MEMORY GAME MODAL -->
+    <div class="game-modal" id="game-modal-memory">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="game-title">🧠 Kosmik Xotira O'yini</div>
+                <button class="modal-close-btn" onclick="window.app.closeGameModal('memory')">✕</button>
+            </div>
+
+            <!-- Start Screen -->
+            <div class="game-screen" id="memory-start-screen">
+                <div class="game-intro-icon">🧠</div>
+                <h2 class="game-intro-title">Xotirangizni Sinang!</h2>
+                <p class="game-intro-desc">Kartalarni ochib, ularning orqasidagi bir xil rasmlarni toping. Qiyinlik darajasini tanlang:</p>
+
+                <div class="memory-diff-selector">
+                    <button class="memory-diff-btn" data-diff="easy" onclick="window.memoryGame.setDifficulty('easy')">Oson (6 juft)</button>
+                    <button class="memory-diff-btn active" data-diff="medium" onclick="window.memoryGame.setDifficulty('medium')">O'rtacha (8 juft)</button>
+                    <button class="memory-diff-btn" data-diff="hard" onclick="window.memoryGame.setDifficulty('hard')">Qiyin (10 juft)</button>
+                </div>
+
+                <div class="game-rules-card">
+                    <div class="rules-title">Qoidalar:</div>
+                    <ul class="rules-list">
+                        <li>Har yurishda 2 ta kartani bosing.</li>
+                        <li>Agar bir xil rasm chiqsa, juftlik ochiq qoladi.</li>
+                        <li>Kamroq yurish va kamroq vaqt ichida topsangiz, 3 ta yulduz olasiz!</li>
+                    </ul>
+                </div>
+                <button class="btn btn-accent" onclick="window.memoryGame.start()">
+                    <span>⚡</span> O'yinni boshlash
+                </button>
+            </div>
+
+            <!-- In-Game HUD -->
+            <div class="game-hud" id="memory-hud" style="display: none;">
+                <div class="hud-item">⏱️ Vaqt: <span class="val" id="memory-time-val">00:00</span></div>
+                <div class="hud-item">👣 Yurishlar: <span class="val" id="memory-moves-val">0</span></div>
+                <div class="hud-item">✨ Juftliklar: <span class="val" id="memory-pairs-val">0 / 8</span></div>
+            </div>
+
+            <!-- Memory Grid -->
+            <div class="memory-grid" id="memory-grid" style="display: none;"></div>
+
+            <!-- Win Screen -->
+            <div class="game-over-screen" id="memory-win-screen" style="display: none;">
+                <div class="memory-stars-row" id="memory-win-stars">⭐⭐⭐</div>
+                <h2 class="game-over-title">G'alaba! Barcha Juftliklar Topildi!</h2>
+                <p class="game-over-subtitle">Xotirangiz juda kuchli!</p>
+                <div class="game-stats-box">
+                    <div class="game-stat-item">
+                        <span class="val" id="memory-win-moves">0</span>
+                        <span class="lbl">Jami Yurishlar</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="memory-win-time">00:00</span>
+                        <span class="lbl">Ketgan Vaqt</span>
+                    </div>
+                </div>
+                <div class="game-rewards-row">
+                    <div class="game-reward-pill" id="memory-earned-xp">+0 XP</div>
+                    <div class="game-reward-pill" id="memory-earned-coins">+0 Tanga</div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="window.app.closeGameModal('memory')">Chiqish</button>
+                    <button class="btn btn-accent" onclick="window.memoryGame.start()">Qayta o'ynash 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME 3: SPEED MATH MODAL -->
+    <div class="game-modal" id="game-modal-math">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="game-title">🧮 Tezkor Matematika</div>
+                <button class="modal-close-btn" onclick="window.app.closeGameModal('math')">✕</button>
+            </div>
+
+            <!-- Start Screen -->
+            <div class="game-screen" id="math-start-screen">
+                <div class="game-intro-icon">🧮</div>
+                <h2 class="game-intro-title">Zukko Matematik</h2>
+                <p class="game-intro-desc">60 soniya ichida imkon qadar ko'p misollarni to'g'ri yeching va aql charxlang!</p>
+
+                <div class="memory-diff-selector">
+                    <button class="math-diff-btn active" data-diff="easy" onclick="window.mathGame.setDifficulty('easy')">Oson (+, -)</button>
+                    <button class="math-diff-btn" data-diff="medium" onclick="window.mathGame.setDifficulty('medium')">O'rta (+, -, ×)</button>
+                    <button class="math-diff-btn" data-diff="hard" onclick="window.mathGame.setDifficulty('hard')">Qiyin (+, -, ×, ÷)</button>
+                </div>
+
+                <div class="game-rules-card">
+                    <div class="rules-title">Qoidalar:</div>
+                    <ul class="rules-list">
+                        <li>Har bir to'g'ri javob uchun ball va combo bonus beriladi.</li>
+                        <li>Ketma-ket 5 ta to'g'ri javob vaqtingizga +5 soniya qo'shadi!</li>
+                        <li>3 marta xato qilsangiz, o'yin to'xtaydi.</li>
+                    </ul>
+                </div>
+                <button class="btn btn-gold" onclick="window.mathGame.start()">
+                    <span>⚡</span> Boshlash
+                </button>
+            </div>
+
+            <!-- In-Game HUD -->
+            <div class="game-hud" id="math-hud" style="display: none;">
+                <div class="hud-item">⏱️ <span class="val" id="math-timer-val">60s</span></div>
+                <div class="hud-item">🎯 Ball: <span class="val" id="math-score-val">0</span></div>
+                <div class="hud-item">🔥 Streak: <span class="val" id="math-streak-val">0</span></div>
+                <div class="hud-item"><span id="math-hearts-val">❤️❤️❤️</span></div>
+            </div>
+
+            <!-- Play Area -->
+            <div class="math-play-area" id="math-play-area" style="display: none;">
+                <div class="math-problem-box">
+                    <span class="math-problem-text" id="math-problem-text">12 + 15 = ?</span>
+                </div>
+                <div class="math-options-grid" id="math-options-grid"></div>
+            </div>
+
+            <!-- Game Over Screen -->
+            <div class="game-over-screen" id="math-gameover-screen" style="display: none;">
+                <div class="game-over-icon">🏆</div>
+                <h2 class="game-over-title">O'yin Yakunlandi!</h2>
+                <p class="game-over-subtitle" id="math-gameover-reason">Vaqt tugadi!</p>
+                <div class="game-stats-box">
+                    <div class="game-stat-item">
+                        <span class="val" id="math-final-score">0</span>
+                        <span class="lbl">Jami Ball</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="math-final-solved">0</span>
+                        <span class="lbl">Yechilgan Misollar</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="math-final-streak">0</span>
+                        <span class="lbl">Eng Katta Streak</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="math-final-best">0</span>
+                        <span class="lbl">Rekord</span>
+                    </div>
+                </div>
+                <div class="game-rewards-row">
+                    <div class="game-reward-pill" id="math-earned-xp">+0 XP</div>
+                    <div class="game-reward-pill" id="math-earned-coins">+0 Tanga</div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="window.app.closeGameModal('math')">Chiqish</button>
+                    <button class="btn btn-gold" onclick="window.mathGame.start()">Qayta o'ynash 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME 4: WORD PUZZLE MODAL -->
+    <div class="game-modal" id="game-modal-word">
+        <div class="game-container">
+            <div class="game-header">
+                <div class="game-title">📚 So'z Topish va Boshqotirma</div>
+                <button class="modal-close-btn" onclick="window.app.closeGameModal('word')">✕</button>
+            </div>
+
+            <!-- Start Screen -->
+            <div class="game-screen" id="word-start-screen">
+                <div class="game-intro-icon">📚</div>
+                <h2 class="game-intro-title">So'z Ustasi</h2>
+                <p class="game-intro-desc">Aralashgan harflardan ta'limiy, ilmiy va tabiatga oid yashirin so'zlarni tuzing!</p>
+
+                <div class="game-rules-card">
+                    <div class="rules-title">Qoidalar:</div>
+                    <ul class="rules-list">
+                        <li>Berilgan ta'rif (clue)ni diqqat bilan o'qing.</li>
+                        <li>Pastdagi harflarni bosib so'zni to'ldiring.</li>
+                        <li>Xato harfni olib tashlash uchun uni qayta bosing.</li>
+                        <li>Agar qiynalsangiz, "💡 Yordam" tugmasidan foydalaning!</li>
+                    </ul>
+                </div>
+                <button class="btn btn-primary" onclick="window.wordGame.start()">
+                    <span>⚡</span> Boshlash
+                </button>
+            </div>
+
+            <!-- In-Game HUD -->
+            <div class="game-hud" id="word-hud" style="display: none;">
+                <div class="hud-item">🎯 Ball: <span class="val" id="word-score-val">0</span></div>
+                <div class="hud-item">📖 Savol: <span class="val" id="word-count-val">1 / 10</span></div>
+                <div class="hud-item">🔥 <span class="val" id="word-streak-val">0 🔥</span></div>
+            </div>
+
+            <!-- Play Area -->
+            <div class="word-play-area" id="word-play-area" style="display: none;">
+                <div class="word-clue-card">
+                    <span class="word-category-badge" id="word-category-badge">Koinot</span>
+                    <div class="word-clue-text" id="word-clue-text">💡 Ta'rif yuklanmoqda...</div>
+                </div>
+
+                <!-- Word Slots -->
+                <div class="word-target-slots" id="word-target-slots"></div>
+
+                <!-- Letters Bank -->
+                <div class="word-letter-bank" id="word-letter-bank"></div>
+
+                <!-- Actions -->
+                <div class="word-controls-row">
+                    <button class="btn btn-secondary" onclick="window.wordGame.clearWord()">
+                        ✕ Tozalash
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.wordGame.useHint()">
+                        💡 Bitta harf yordami
+                    </button>
+                </div>
+            </div>
+
+            <!-- Completion Screen -->
+            <div class="game-over-screen" id="word-end-screen" style="display: none;">
+                <div class="game-over-icon">🎓</div>
+                <h2 class="game-over-title">Ajoyib Natija!</h2>
+                <p class="game-over-subtitle">Barcha so'zlarni muvaffaqiyatli topdingiz!</p>
+                <div class="game-stats-box">
+                    <div class="game-stat-item">
+                        <span class="val" id="word-final-score">0</span>
+                        <span class="lbl">To'plangan Ball</span>
+                    </div>
+                    <div class="game-stat-item">
+                        <span class="val" id="word-final-solved">0</span>
+                        <span class="lbl">Topilgan So'zlar</span>
+                    </div>
+                </div>
+                <div class="game-rewards-row">
+                    <div class="game-reward-pill" id="word-earned-xp">+0 XP</div>
+                    <div class="game-reward-pill" id="word-earned-coins">+0 Tanga</div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-secondary" onclick="window.app.closeGameModal('word')">Chiqish</button>
+                    <button class="btn btn-primary" onclick="window.wordGame.start()">Qayta o'ynash 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE EDIT MODAL -->
+    <div class="app-modal" id="profile-edit-modal">
+        <div class="modal-dialog" style="max-width: 440px;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <h3>👤 O'quvchi Profili</h3>
+                    <div class="modal-subtitle">Ismingiz va avataringizni tanlang</div>
+                </div>
+                <button class="modal-close-btn" id="close-profile-modal-btn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Avatarni tanlang:</label>
+                    <div class="avatar-selection-grid">
+                        <div class="avatar-choice selected" data-avatar="🚀">🚀</div>
+                        <div class="avatar-choice" data-avatar="🤖">🤖</div>
+                        <div class="avatar-choice" data-avatar="🧙‍♂️">🧙‍♂️</div>
+                        <div class="avatar-choice" data-avatar="🦁">🦁</div>
+                        <div class="avatar-choice" data-avatar="🐱">🐱</div>
+                        <div class="avatar-choice" data-avatar="🦄">🦄</div>
+                        <div class="avatar-choice" data-avatar="🦊">🦊</div>
+                        <div class="avatar-choice" data-avatar="⚡">⚡</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-profile-name">Ismingiz yoki Taxallusingiz:</label>
+                    <input type="text" id="edit-profile-name" class="form-input" placeholder="Ismingizni kiriting" maxlength="24">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="document.getElementById('profile-edit-modal').classList.remove('active')">
+                    Bekor qilish
+                </button>
+                <button class="btn btn-primary" id="save-profile-btn">
+                    Saqlash ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts (Ordered for dependency resolution) -->
+    <script src="js/audio.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/games/car-game.js"></script>
+    <script src="js/games/memory-game.js"></script>
+    <script src="js/games/math-game.js"></script>
+    <script src="js/games/word-game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
